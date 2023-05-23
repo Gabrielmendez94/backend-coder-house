@@ -85,9 +85,16 @@ export default class ProductManager {
 }
 
 export const nuevoProducto = new ProductManager('./productos.json');
-nuevoProducto.addProduct("Cartera", "Material cuero", 200, "sin imagen", 33, 25)
-nuevoProducto.addProduct("Mochila", "De lona", 5430, "Sin imagen", 2345, 15)
-nuevoProducto.addProduct("Riñonera", "De lona", 5430, "Sin imagen", 235, 15)
+nuevoProducto.addProduct("Campera negra", "Material Jean", 200, "sin imagen", 33, 25)
+nuevoProducto.addProduct("Mochila", "De lona", 5430, "Sin imagen", 234, 15)
+nuevoProducto.addProduct("Bandolera", "De lona", 5430, "Sin imagen", 235, 15)
+nuevoProducto.addProduct("Riñonera", "De lona", 5430, "Sin imagen", 236, 15)
+nuevoProducto.addProduct("Remera", "Argentina", 5430, "Sin imagen", 237, 15)
+nuevoProducto.addProduct("Remera", "Boca Juniors", 5430, "Sin imagen", 245, 15)
+nuevoProducto.addProduct("Zapatillas", "Cuero", 5430, "Sin imagen", 238, 15)
+nuevoProducto.addProduct("Ojotas", "Nike", 5430, "Sin imagen", 239, 15)
+nuevoProducto.addProduct("Camisa", "Seda", 5430, "Sin imagen", 249, 15)
+nuevoProducto.addProduct("Riñonera", "De lona", 5430, "Sin imagen", 223, 15)
 nuevoProducto.getProductById(2);
 nuevoProducto.getProducts();
 nuevoProducto.updateProduct(3, {title: "cartera", description: "lona", price: 250, thumbnail:"sin foto", code:56, stock:96})

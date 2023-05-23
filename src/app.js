@@ -4,8 +4,14 @@ import {nuevoProducto} from './segundoEntregable.js'
 const app = express();
 
 app.get('/products', (req, res)=>{
+    const usersId = parseInt(req.query.limit);
     const products = nuevoProducto.getProducts();
-    res.send(JSON.stringify(products))
+    if(!usersId){
+        res.send(JSON.stringify(products))    
+    } else{
+        const product = products.slice(0,usersId);;
+            res.send(JSON.stringify(product))
+    }
 });
 
 app.get('/products/:id', (req,res)=>{

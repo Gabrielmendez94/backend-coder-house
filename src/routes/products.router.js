@@ -47,7 +47,7 @@ router.put('/:pid', (req, res)=>{
 router.delete('/:pid', (req, res)=>{
     const productId = parseInt(req.params.pid);
     let productToDelete = nuevoProducto.deleteProduct(productId);
-    if(!productToDelete) res.send("Eliminado")
+    console.log('Eliminado')
 })
 
 export default router;

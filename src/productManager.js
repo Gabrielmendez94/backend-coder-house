@@ -25,7 +25,7 @@ export default class ProductManager {
         }
     }
 
-    getProducts(){
+    getProducts (){
         return this.products
     }
 

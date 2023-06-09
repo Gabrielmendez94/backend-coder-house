@@ -30,7 +30,7 @@ export default class ProductManager {
     }
 
     getProductById(idNumber){
-        const productID = this.products.find(product => product.id === idNumber);
+        const productID = this.products.findIndex(product => product.id === idNumber);
         if (!productID){
             return console.error("Not found")
         } else {
@@ -39,13 +39,14 @@ export default class ProductManager {
     }
 
     updateProduct(id, newObject) {
-        const productIndex = this.products.findIndex(product => product.id === id);
+        const productIndex = this.products.find(product => product.id === id);
         if (productIndex >= 0) {
             const updatedProduct = {
                 ...this.products[productIndex],
                 ...newObject
             };
             this.products[productIndex] = updatedProduct;
+            nuevoProducto.saveProducts();
             console.log("Producto actualizado correctamente");
         }else{
             console.error("No se encontró el producto");
@@ -97,6 +98,6 @@ nuevoProducto.addProduct("Camisa", "Seda", 5430, "Sin imagen", 249, 15)
 nuevoProducto.addProduct("Riñonera", "De lona", 5430, "Sin imagen", 223, 15)
 nuevoProducto.getProductById(2);
 nuevoProducto.getProducts();
-nuevoProducto.updateProduct(3, {title: "cartera", description: "lona", price: 250, thumbnail:"sin foto", code:56, stock:96})
+//nuevoProducto.updateProduct(3, {title: "cartera", description: "lona", price: 250, thumbnail:"sin foto", code:56, stock:96})
 nuevoProducto.saveProducts();
 nuevoProducto.getProducts();

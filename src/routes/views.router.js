@@ -14,14 +14,8 @@ router.get('/', (req, res)=>{
 
 router.get('/realtimeproducts', (req, res)=>{
     res.render('realTimeProducts',{
-        newProducts,
         style: 'style.css'
     })
-})
-
-router.delete('/realtimeproducts/:id', (req, res)=>{
-    const productId = parseInt(req.params.id);
-    nuevoProducto.deleteProduct(productId);
 })
 
 export default router;

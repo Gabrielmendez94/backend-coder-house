@@ -30,10 +30,11 @@ export default class ProductManager {
     }
 
     getProductById(idNumber){
-        const productID = this.products.findIndex(product => product.id === idNumber);
+        const productID = this.products.find(product => product.id === idNumber);
         if (!productID){
             return console.error("Not found")
         } else {
+            console.log(productID)
             return ("Producto con el ID solicitado: ", productID)
         }   
     }

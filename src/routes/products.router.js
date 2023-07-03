@@ -1,12 +1,14 @@
 import { Router } from "express";
 import ProductManager from "../managers/productManager.js";
+import productModel from "../dao/models/products.model.js";
 //import { io } from "../app.js";
 
 const router = Router();
 const newProduct = new ProductManager(); 
 
 router.get('/', async(req, res)=>{
-    const usersId = parseInt(req.query.limit);
+
+   const usersId = parseInt(req.query.limit);
     const products = await newProduct.getProducts();
     if(!usersId){
         res.send(JSON.stringify(products))    

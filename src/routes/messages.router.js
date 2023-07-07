@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import MessagesManager from '../managers/messagesManager.js';
 
+const router = Router();
 const MessageManager = new MessagesManager();
 
-const router = Router();
+
 
 router.get('/', async (req, res) => {
     try {

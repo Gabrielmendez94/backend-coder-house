@@ -2,7 +2,11 @@
     <h4>Products</h4>
     <ul>
         {{#each products.docs}}
-            <li>{{this.title}}:   ${{this.price}},00</li>
+            <li>{{this.title}}</li>
+            {{this.description}}<br>
+            Precio: ${{this.price}},00<br><br>
+            <button>Agregar al carrito</button>
+            <br><br>
         {{/each}}
     </ul>
     <div>

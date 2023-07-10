@@ -4,11 +4,10 @@ import handlebars from 'express-handlebars';
 import productsRouter from './routes/products.router.js';
 import cartsRouter from './routes/carts.router.js';
 import messagesRouter from './routes/messages.router.js'
-//import viewsRouter from './routes/views.router.js'
+import viewsRouter from './routes/views.router.js'
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import { productsUpdated, chat } from './utils/socketUtils.js';
-import productModel from './dao/models/products.model.js';
 
 const app = express();
 const httpServer = app.listen(8080,()=> console.log('Servidor escuchando en el puerto 8080'));
@@ -37,17 +36,4 @@ app.use(express.static(__dirname + '/public'));
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/messages', messagesRouter);
-//app.use('/', viewsRouter);
-
-app.get('/products', async (req, res)=>{
-    const {page} = req.query;
-    const products = await productModel.paginate(
-        {},
-        {
-            limit: 5,
-            lean: true,
-            page: page ?? 1
-        }
-    )
-    res.render('products', {products});
-})
+app.use('/', viewsRouter);

@@ -21,7 +21,7 @@ export default class CartManager{
         if(!cartID){
             return "Not Found"
         }else {
-            return cartID;
+            return cartID.products;
         }
     }
 
@@ -40,7 +40,7 @@ export default class CartManager{
           if (!cart) {
             throw new Error("Cart not found");
           }
-          const existingProductIndex = cart.products.findIndex(prod => prod.product === prodId);
+          const existingProductIndex = cart.products.findIndex(prod => prod.product.valueOf() === prodId);
           if (existingProductIndex !== -1) {
             cart.products[existingProductIndex].quantity++;
           } else {

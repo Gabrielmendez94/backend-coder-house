@@ -17,11 +17,12 @@ router.get('/', (req, res)=>{
 })
 
 router.get('/products', async (req, res)=>{
-    const {page} = req.query;
+    const limit = req.query.limit;
+    const page = req.query.page;
     const products = await productModel.paginate(
         {},
         {
-            limit: 5,
+            limit: limit || 5,
             lean: true,
             page: page ?? 1
         }

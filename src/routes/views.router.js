@@ -54,4 +54,12 @@ router.get('/webchat', (req,res)=>{
     res.render('chat', { style: 'chat.css', title: 'Tienda de ropa'});
 })
 
+router.get('/register', (req, res) => {
+    res.render('register');
+})
+
+router.get('/login', (req, res) => {
+    res.render('login');
+})
+
 export default router;

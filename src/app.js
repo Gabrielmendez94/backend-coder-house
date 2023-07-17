@@ -3,8 +3,9 @@ import __dirname from './utils.js';
 import handlebars from 'express-handlebars';
 import productsRouter from './routes/products.router.js';
 import cartsRouter from './routes/carts.router.js';
-import messagesRouter from './routes/messages.router.js'
-import viewsRouter from './routes/views.router.js'
+import messagesRouter from './routes/messages.router.js';
+import sessionsRouter from './routes/sessions.router.js';
+import viewsRouter from './routes/views.router.js';
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import { productsUpdated, chat } from './utils/socketUtils.js';
@@ -36,4 +37,5 @@ app.use(express.static(__dirname + '/public'));
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/messages', messagesRouter);
+app.use('/api/sessions', sessionsRouter);
 app.use('/', viewsRouter);

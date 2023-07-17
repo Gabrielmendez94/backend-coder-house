@@ -9,13 +9,6 @@ const router = express.Router();
 const newProducts = new ProductManager();
 const cartManager = new CartManager();
 
-router.get('/', (req, res)=>{
-    res.render('home', {
-        newProducts,
-        style: 'style.css'
-    });
-})
-
 router.get('/products', async (req, res)=>{
     const limit = req.query.limit;
     const page = req.query.page;
@@ -54,12 +47,29 @@ router.get('/webchat', (req,res)=>{
     res.render('chat', { style: 'chat.css', title: 'Tienda de ropa'});
 })
 
-router.get('/register', (req, res) => {
+const publicAccess = (req,res,next) => {
+    if(req.session.user) return res.redirect("/products");
+    next(); 
+  }
+  
+  const privateAccess = (req,res,next) => {
+    if(!req.session.user) return res.redirect("/login")
+    next()
+  }
+
+router.get('/register', publicAccess, (req, res) => {
     res.render('register');
 })
 
-router.get('/login', (req, res) => {
+router.get('/login', publicAccess, (req, res) => {
     res.render('login');
 })
+
+router.get('/', privateAccess, (req, res)=>{
+    res.render('user', {
+        user: req.session.user
+    });
+})
+
 
 export default router;

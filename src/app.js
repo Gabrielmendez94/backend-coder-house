@@ -1,4 +1,6 @@
 import  express  from 'express';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import __dirname from './utils.js';
 import handlebars from 'express-handlebars';
 import productsRouter from './routes/products.router.js';
@@ -33,6 +35,15 @@ app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 app.use(express.static(__dirname + '/public'));
+app.use(session({
+    store: new MongoStore({
+        mongoUrl: MONGO,
+        ttl: 3600
+    }),
+    secret: "CoderSecretSHHHHH",
+    resave: false,
+    saveUninitialized: false
+}));
 
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);

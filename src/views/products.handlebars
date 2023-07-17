@@ -1,4 +1,9 @@
 <div>
+    <h1>Bienvenido {{user.first_name}}</h1>
+    <p>Mail: {{user.email}}</p>
+</div>
+
+<div>
     <h4>Products</h4>
     <ul>
         {{#each products.docs}}
@@ -20,3 +25,7 @@
         {{/if}}
     </div>
 </div>
+
+<button class="logout">Cerrar sesión</button>
+
+<script src="/js/logout.js"></script>

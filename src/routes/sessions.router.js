@@ -12,7 +12,7 @@ router.post('/register', async (req, res) => {
         last_name,
         email,
         age,
-        password //De momento no vamos a hashearlo, eso corresponde a la siguiente clase.
+        password 
     }
     await userModel.create(user);
     res.send({ status: "success", message: "User registered" });
@@ -21,19 +21,13 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    // check if user exists
     const user = await userModel.findOne({ email });
 
     if (!user) return res.status(400).send({ status: "error", error: "User does not exists" });
 
-    // check if password is correct
-
     if (user.password !== password) {
         return res.status(400).send({ status: "error", error: "User exists but password is incorrect" });
     }
-
-    // const user = await userModel.findOne({ email, password }); //Ya que el password no está hasheado, podemos buscarlo directamente
-    // if (!user) return res.status(400).send({ status: "error", error: "Incorrect credentials" });
 
     req.session.user = {
         name: `${user.first_name} ${user.last_name}`,
@@ -43,5 +37,10 @@ router.post('/login', async (req, res) => {
 
     res.send({ status: "success", payload: req.session.user, message: "¡Primer logueo realizado! :)" });
 })
+
+router.post('/logout', async (req, res)=>{
+    req.session.destroy();
+    res.send({status: 1, msg: 'Sesión cerrada correctamente'});
+});
 
 export default router;

@@ -71,5 +71,9 @@ router.get('/', privateAccess, (req, res)=>{
     });
 })
 
+router.get('/resetpassword', (req, res)=>{
+    res.render('resetPassword')
+})
+
 
 export default router;

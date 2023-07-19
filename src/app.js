@@ -11,6 +11,8 @@ import viewsRouter from './routes/views.router.js';
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import { productsUpdated, chat } from './utils/socketUtils.js';
+import passport from 'passport';
+import initializePassport from './config/passport.config.js';
 
 const app = express();
 const httpServer = app.listen(8080,()=> console.log('Servidor escuchando en el puerto 8080'));
@@ -44,6 +46,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);

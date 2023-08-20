@@ -1,13 +1,9 @@
 import { Router } from 'express';
-<<<<<<< HEAD
-import passport from 'passport';
-=======
 import userModel from '../dao/models/users.model.js';
 import passport/*, { session }*/ from 'passport';
 import { createHash } from '../utils.js';
 import cookieParser from 'cookie-parser';
 
->>>>>>> 36a3f482fbf63cd6ad9eb74f6f4ccb83625a1580
 const router = Router();
 router.use(cookieParser());
 

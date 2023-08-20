@@ -16,11 +16,11 @@ import passport from 'passport';
 import initializePassport from './config/passport.config.js';
 
 const app = express();
-const httpServer = app.listen(8080,()=> console.log('Servidor escuchando en el puerto 8080'));
+const httpServer = app.listen(config.port,()=> console.log(`Servidor escuchando en el puerto ${config.port}`));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 
-const MONGO = "mongodb+srv://mendezgabriel1994:yG4UDmf73boeVmki@cluster0.x3zdcqe.mongodb.net/ecommerce";
+const MONGO = `mongodb+srv://mendezgabriel1994:${config.mongoPswd}@cluster0.x3zdcqe.mongodb.net/ecommerce`;
 const connection = mongoose.connect(MONGO, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -39,7 +39,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 app.use(express.static(__dirname + '/public'));
 app.use(session({
-    store: new MongoStore({
+    store: MongoStore.create({
         mongoUrl: MONGO,
         ttl: 3600
     }),

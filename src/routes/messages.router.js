@@ -1,28 +1,9 @@
 import { Router } from 'express';
-import MessagesManager from '../managers/messagesManager.js';
+import { createNewMessage, getAllMessages } from '../controllers/messages.controller.js';
 
 const router = Router();
-const MessageManager = new MessagesManager();
 
-
-
-router.get('/', async (req, res) => {
-    try {
-        const messages = await MessageManager.getMessages();
-        res.send({status: 1, messages: messages});
-    } catch (error) {
-        res.status(500).send({status: 0, msg: error.message});
-    }
-});
-
-router.post('/', async (req, res) => {
-    try {
-        const { user, message } = req.body;
-        const newMessage = await MessageManager.addMessage(user, message);
-        res.send({status: 1, msg: 'Message added successfully', message: newMessage});
-    } catch (error) {
-        res.status(500).send({status: 0, msg: error.message});
-    }
-});
+router.get('/', getAllMessages);
+router.post('/', createNewMessage);
 
 export default router;

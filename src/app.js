@@ -8,6 +8,7 @@ import cartsRouter from './routes/carts.router.js';
 import messagesRouter from './routes/messages.router.js';
 import sessionsRouter from './routes/sessions.router.js';
 import viewsRouter from './routes/views.router.js';
+import config from './config/config.js';
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import { productsUpdated, chat } from './utils/socketUtils.js';

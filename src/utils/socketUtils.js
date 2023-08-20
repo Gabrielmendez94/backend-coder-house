@@ -1,5 +1,5 @@
-import ProductManager from '../managers/productManager.js';
-import MessagesManager from '../managers/messagesManager.js';
+import ProductManager from '../dao/managers/productManager.js';
+import MessagesManager from '../dao/managers/messagesManager.js';
 
 const productManager = new ProductManager();
 const messageManager = new MessagesManager();

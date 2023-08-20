@@ -1,4 +1,4 @@
-import MessagesModel from "../dao/models/messages.model.js";
+import MessagesModel from "../models/messages.model.js";
 
 class MessagesManager {
   async getMessages() {

@@ -1,6 +1,6 @@
-import ProductManager from '../dao/managers/productManager.js';
+import ProductManager from '../dao/mongo/productManager.js';
 import productModel from '../dao/models/products.model.js';
-import CartManager from '../dao/managers/cartManager.js';
+import CartManager from '../dao/mongo/cartManager.js';
 
 const newProducts = new ProductManager();
 const cartManager = new CartManager();

@@ -8,6 +8,8 @@ import cartsRouter from './routes/carts.router.js';
 import messagesRouter from './routes/messages.router.js';
 import sessionsRouter from './routes/sessions.router.js';
 import viewsRouter from './routes/views.router.js';
+import mailingRouter from './routes/mailing.router.js';
+import twilioRouter from './routes/twilio.router.js';
 import config from './config/config.js';
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
@@ -15,12 +17,17 @@ import { productsUpdated, chat } from './utils/socketUtils.js';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
 
-const app = express();
-const httpServer = app.listen(config.port,()=> console.log(`Servidor escuchando en el puerto ${config.port}`));
-app.use(express.json());
-app.use(express.urlencoded({extended:true}))
 
-const MONGO = `mongodb+srv://mendezgabriel1994:${config.mongoPswd}@cluster0.x3zdcqe.mongodb.net/ecommerce`;
+const app = express();
+const PORT = config.port, MONGO_PASS = config.dbPswd, MONGO_USER = config.dbUser, MONGO_HOST =config.dbHost;
+
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+
+const httpServer = app.listen(PORT,()=> console.log(`Servidor escuchando en el puerto ${PORT}`));
+
+//MONGO CONNECTION
+const MONGO = `mongodb+srv://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}/ecommerce`;
 const connection = mongoose.connect(MONGO, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -51,8 +58,12 @@ initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+//ROUTERS
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/messages', messagesRouter);
 app.use('/api/sessions', sessionsRouter);
+app.use('/api/mailing', mailingRouter);
+app.use('/api/twilio', twilioRouter);
 app.use('/', viewsRouter);

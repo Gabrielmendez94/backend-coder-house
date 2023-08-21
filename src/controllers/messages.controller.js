@@ -1,4 +1,4 @@
-import MessagesManager from '../dao/managers/messagesManager.js';
+import MessagesManager from '../dao/mongo/messagesManager.js';
 
 const MessageManager = new MessagesManager();
 

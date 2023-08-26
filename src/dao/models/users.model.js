@@ -28,8 +28,8 @@ const schema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Carts"
     },
-    role: {
-        type: String,
+    user_role: {
+        type: Boolean,
         default: "user"
     }
 

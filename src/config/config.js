@@ -21,5 +21,12 @@ export default{
             authToken: process.env.TWILIO_AUTH_TOKEN,
             number: process.env.TWILIO_NUMBER,
         },
+    },
+    githubAuth:{
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET
+    },
+    jwtAuth:{
+        privateKey: process.env.PRIVATE_KEY
     }
 }

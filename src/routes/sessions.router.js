@@ -2,18 +2,20 @@ import { Router } from 'express';
 import userModel from '../dao/models/users.model.js';
 import passport/*, { session }*/ from 'passport';
 import { createHash } from '../utils.js';
+import config from '../config/config.js';
 import cookieParser from 'cookie-parser';
 
 const router = Router();
-router.use(cookieParser());
+const PRIVATE_KEY = config.jwtAuth.privateKey;
+router.use(cookieParser(PRIVATE_KEY));
 
 router.get('/github', passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => { });
 
-router.get('/githubcallback', passport.authenticate('github', { failureRedirect: 'api/sessions/login' }), async (req, res) => {
+router.get('/githubcallback', passport.authenticate('github', { failureRedirect: '/api/sessions/login' }), async (req, res) => {
     req.session.user = req.user;
     res.redirect('/');
 });
-/*
+
 router.post('/register', async (req, res) => {
     const { first_name, last_name, email, age, password } = req.body;
     const exists = await userModel.findOne({ email });
@@ -27,7 +29,7 @@ router.post('/register', async (req, res) => {
     }
     await userModel.create(user);
     res.send({ status: "success", message: "User registered" });
-})*/
+})
 
 router.post('/login', passport.authenticate('login', {session: false}), (req, res) => {
     res.cookie('coderCookieToken', req.user, {httpOnly: true}).send({status: 'Success', message: 'Cookie set'});
@@ -49,7 +51,7 @@ router.post('/login', passport.authenticate('login', {session: false}), (req, re
     res.send({ status: "success", payload: req.session.user, message: "¡Primer logueo realizado! :)" });
 */})
 
-router.post('/register', passport.authenticate('register', {session: false}), (req, res)=>{
+router.post('/auth-register', passport.authenticate('register', {session: false}), (req, res)=>{
     res.send(req.user);
 });
 

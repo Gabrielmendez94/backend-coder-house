@@ -1,22 +1,22 @@
 import cartModel from "../models/carts.model.js";
+import productModel from "../models/products.model.js";
 
 export default class CartManager{
     constructor(){
         this.cartModel = cartModel;
+        this.productModel = productModel;
     }
 
-    async addCart(){
+    async createCart(){
         try{
-            const newProductCart = await this.cartModel.create({products: []});
-            return newProductCart;
+          const newProductCart = await this.cartModel.create({products: []});
+          return newProductCart;
         } catch(error){
-            console.log('Failed to add cart', error);
-            throw error;
+            throw new Error(`Failed to add cart: ${error.message}`);
         }
     }
 
-    async getCartByID(id){
-
+    async getCartById(id){
         const cartID = await this.cartModel.findById(id);
         if(!cartID){
             return "Not Found"
@@ -25,7 +25,7 @@ export default class CartManager{
         }
     }
 
-    async getCart() {
+    async getCarts() {
         try {
           const cartsMgd = await this.cartModel.find();
           return cartsMgd;
@@ -34,7 +34,7 @@ export default class CartManager{
         }
     }
 
-    async addProductsToCart(cartId, prodId) {
+    async addToCart(cartId, prodId) {
         try {
           const cart = await this.cartModel.findById(cartId);
           if (!cart) {

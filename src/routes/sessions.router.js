@@ -16,15 +16,15 @@ router.get('/githubcallback', passport.authenticate('github', { failureRedirect:
     res.redirect('/');
 });
 
-router.post('/register', async (req, res) => {
-    const { first_name, last_name, email, age, password } = req.body;
+router.post('/auth-register', async (req, res) => {
+    const { first_name, last_name, email, birth_date, password } = req.body;
     const exists = await userModel.findOne({ email });
     if (exists) return res.status(400).send({ status: "error", error: "User already exists" });
     const user = {
         first_name,
         last_name,
         email,
-        age,
+        birth_date,
         password 
     }
     await userModel.create(user);
@@ -51,7 +51,7 @@ router.post('/login', passport.authenticate('login', {session: false}), (req, re
     res.send({ status: "success", payload: req.session.user, message: "¡Primer logueo realizado! :)" });
 */})
 
-router.post('/auth-register', passport.authenticate('register', {session: false}), (req, res)=>{
+router.post('/register', passport.authenticate('register', {session: false}), (req, res)=>{
     res.send(req.user);
 });
 

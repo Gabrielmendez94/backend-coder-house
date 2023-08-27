@@ -28,5 +28,8 @@ export default{
     },
     jwtAuth:{
         privateKey: process.env.PRIVATE_KEY
+    },
+    factory:{
+        persistence: process.env.PERSISTENCE
     }
 }

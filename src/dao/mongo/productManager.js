@@ -41,6 +41,15 @@ export default class ProductManager {
         }
     }
 
+    getProductByCode = async (productCode) => {
+      try {
+        const product = await this.productModel.findOne({ code: productCode });
+        return product;
+      } catch (error) {
+        throw new Error(`Failed to retrieve product: ${error.message}`);
+      }
+    }
+
     updateProduct = async (productId, updatedFields) => {
         try {
           const { code, price, stock, thumbnails, ...otherFields } = updatedFields;

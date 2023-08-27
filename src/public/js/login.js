@@ -14,6 +14,15 @@ form.addEventListener('submit',e=>{
     }).then(result=>{
         if(result.status===200){
             window.location.replace('/products');
+        } else{
+            return result.json();
         }
+    }).then(data=>  {
+        if(data){
+            console.error(data);
+        }
+    })
+    .catch(error=>{
+        console.error('Fetch error: ', error)
     })
 })

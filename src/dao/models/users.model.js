@@ -30,7 +30,7 @@ const schema = new mongoose.Schema({
     },
     user_role: {
         type: Boolean,
-        default: "user"
+        default: false
     }
 
 })

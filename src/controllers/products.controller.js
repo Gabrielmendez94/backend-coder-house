@@ -1,7 +1,8 @@
 import ProductManager from "../dao/mongo/productManager.js";
+import ProductService from "../services/products.service.js";
 
-const newProduct = new ProductManager();
-
+const productService = new ProductService(), newProduct = new ProductManager();
+/*
 export const getAllProducts = async(req, res)=>{
 
     const usersId = parseInt(req.query.limit);
@@ -12,27 +13,39 @@ export const getAllProducts = async(req, res)=>{
          const product = products.slice(0,usersId);;
              res.send(JSON.stringify(product))
      }
- }
+ }*/
+
+export const getAllProducts = async (req, res) => {
+    try {
+        const { limit = 10, page = 1, sort, category, available } = req.query;
+        // Get baseUrl for navigation links
+        const baseUrl = `${req.protocol}://${req.get('host')}${req.originalUrl.split('?')[0]}`;
+        const products = await productService.getProducts(limit, page, sort, category, available, baseUrl);
+        res.send({ status: 1, ...products });
+    } catch (error) {
+        res.status(500).send({ status: 0, msg: error.message });
+    }
+};
 
  export const getProductByID = async (req,res)=>{
     try {
         const productId = req.params.pid;
-        const product = await newProduct.getProductById(productId);
-        res.send(product);
+        const product = await productService.getProductById(productId);
+        res.send({status: 1, product: product});
     } catch(error){
-        res.status(404).send({msg: error.message});
+        res.status(404).send({status: 0, msg: error.message});
     }
 }
 
-export const createNewProduct = async (req, res)=>{
+export const createNewProduct = async (req, res)=>{ 
     try{
-        let newProducts = req.body;
-        await newProduct.addProduct(newProducts); 
+        const newProducts = req.body;
+        const newProduct = await productService.addProduct(newProducts); 
 //        io.emit('addProducts', productAdded);
-        res.send("Producto agregado")
+        res.send({ status: 1, msg: 'Product added successfully', product: newProduct });
     }
     catch (error){
-        res.status(500).send('Error en la obtención de los datos');
+        res.status(500).send({ status: 0, msg: error.message });
     }
 }
 
@@ -41,10 +54,10 @@ export const updateProductById = async(req, res)=>{
         const productId = req.params.pid;
         const dataToUpdate = req.body;
         if(Object.keys(req.body).length === 0) throw new Error('Empty request body');
-        const uptatedProduct = await newProduct.updateProduct(productId, dataToUpdate);
-        res.send(uptatedProduct)    
+        const updatedProduct = await productService.updateProduct(productId, dataToUpdate);
+        res.send({ status: 1, msg: 'Product updated successfully', product: updatedProduct });   
     } catch(error){
-         res.status(500).send({status: 0, msg: error.message})
+         res.status(404).send({status: 0, msg: error.message})
     }
 //    io.emit('addProducts', productAdded);
 }
@@ -52,11 +65,10 @@ export const updateProductById = async(req, res)=>{
 export const deleteProductById = async (req, res)=>{
     try{
         const productId = req.params.pid;
-        console.log
-        await newProduct.deleteProduct(productId);
-        res.send('Product deleted successfully');
+        await productService.deleteProduct(productId);
+        res.send({ status: 1, msg: 'Product deleted successfully' });
     } catch (error){
-        res.status(404).send('Error');
+        res.status(404).send({ status: 0, msg: error.message });
     }
 //    io.emit('addProducts', productAdded);
 }

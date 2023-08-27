@@ -34,7 +34,8 @@ const prodSchema = new mongoose.Schema({
 
    stock : {
     type: Number,
-    required: true
+    required: true,
+    min: [0, 'Stock cannot be negative']
    },
 })
 

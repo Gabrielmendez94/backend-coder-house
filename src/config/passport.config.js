@@ -1,19 +1,26 @@
 import passport from 'passport';
 import userModel from '../dao/models/users.model.js';
-import GitHubStrategy from 'passport-github2';
+import GitHubStrategy, { Strategy } from 'passport-github2';
 import local from 'passport-local';
 import jwt from 'passport-jwt';
 import {default as token} from 'jsonwebtoken';
 import config from './config.js';
-import { createHash, isValidPassword } from '../utils.js';
+import { createHash, isValidPassword, cookieExtractor } from '../utils.js';
 import UserDTO from '../dto/users.dto.js';
 
-const LocalStrategy = local.Strategy;
+//Env var
+const PRIVATE_KEY = config.jwtAuth.privateKey, CLIENT_ID = config.githubAuth.clientId, CLIENT_SECRET = config.githubAuth.clientSecret, ADMIN_USER= config.admin.user, ADMIN_PASSWORD=config.admin.password;
+
+
+//JWT
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
-const PRIVATE_KEY = config.jwtAuth.privateKey, CLIENT_ID = config.githubAuth.clientId, CLIENT_SECRET = config.githubAuth.clientSecret;
-
 export const generateToken = user => token.sign({user}, PRIVATE_KEY, {expiresIn: '1d'});
+
+//Local
+const LocalStrategy = local.Strategy;
+
+
 
 const initializePassport = () => {
 
@@ -21,44 +28,98 @@ const initializePassport = () => {
         usernameField: 'email',
         passReqToCallback: true
     }, async (req, username, password, done)=>{
-        const {first_name, last_name, email, birth_date} = req.body;
         try{
-            let user = await userModel.findOne({email: username});
-            if(user) return done(null,false, {message: 'User already exists'});
-
-            let role = false;
-            if(email.includes("admin")){
-                role=true;
+            const {first_name, last_name, email, birth_date, role} = req.body;
+            if(username.toLowerCase() === ADMIN_USER.toLowerCase()){
+                errorMsg = "Flowerier already exists";
+                return done(null, false, errorMsg );                
             }
-
+            const exists = await userModel.findOne({ email: { $regex: new RegExp(`^${username}$`, 'i') } });
+            if(exists){
+                errorMsg = "Flowerier already exists";
+                return done(null, false, errorMsg );
+            }
             const newUser = {
                 first_name,
                 last_name,
-                email,
+                email: email.toLowerCase(),
                 birth_date,
                 password: createHash(password),
-                user_role: role
-            }
-            user = await userModel.create(newUser);
-            return done(null, user);
-        } catch(error){
-            return done({message: 'Error creating user'});
+                role,
+            };
+            const user = await userModel.create(newUser);
+            const userDTO = new UserDTO(user);
+            return done(null, userDTO);
+        } catch (error) {
+            errorMsg = error.message;
+            return done( errorMsg );
         }
     }));
 
-    passport.use('login', new LocalStrategy({ usernameField: 'email' }, async (username, password, done) => {
+    passport.use('login', new LocalStrategy({
+        usernameField: 'email',
+        passReqToCallback: true,
+     }, async (req, username, password, done) => {
+        let errorMsg;
         try {
-            const user = await userModel.findOne({ email: username });
-            if (!user) return done(null, false, { message: "User not found" });
-            if (!isValidPassword(user, password)) return done(null, false);
-            const {password: pass, ...userNoPass} = user._doc;
-//            delete user.password;
-//            return done(null, user);
-            const jwt = generateToken(userNoPass);
-//            console.log({jwt})
-            return done(null, userNoPass);
-        } catch (error) {
-            return done({ message: "Error logging in" });
+            let userJwt;
+            if(username.toLowerCase() === ADMIN_USER.toLowerCase()){
+                if(password !== ADMIN_PASSWORD){
+                    errorMsg = 'Password is incorrect';
+                    return done(null, false, errorMsg);
+                }
+                userJwt = {
+                    first_name: 'Admin',
+                    last_name: 'Admin',
+                    email: ADMIN_USER,
+                    birth_date: '',
+                    role: 'admin'
+                };
+            }else{
+                const user = await userModel.findOne({ email: { $regex: new RegExp(`^${username}$`, 'i') } });
+                if(!user){
+                    errorMsg = "Wrong flowerier";
+                    return done(null, false, errorMsg );                    
+                }
+                if (!isValidPassword(user, password)) {
+                    errorMsg = "Password is incorrect";
+                    return done(null, false, errorMsg );
+                }
+                const userDTO = new UserDTO(user);
+                userJwt = userDTO;
+            }
+            const jwt = generateToken(userJwt);
+            return done(null, jwt); 
+        }catch (error) {
+            errorMsg = error.message;
+            return done( errorMsg );
+        }
+    }));
+
+    passport.use('reserPassword', new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'newPassword',
+        passReqToCallback: true,
+    }, async (req, username, password, done)=>{
+        let errorMsg;
+        try{
+            if(username.toLowerCase()=== ADMIN_USER.toLowerCase()){
+                errorMsg = "Admin password cannot be reset";
+                return done (null, false, errorMsg);
+            } else{
+                const user = await userModel.findOne({email: {$regex: new RegExp(`^${username}$`, 'i')}});
+                if(!user){
+                    errorMsg = "Wrong flowerier";
+                    return done(null, false, errorMsg );                    
+                }
+                const newHashedPassword = createHash(password);
+                await userModel.updateOne({ _id: user._id }, { $set: { password: newHashedPassword } });
+                const userDTO = new UserDTO(user);                
+                return done(null, userDTO);
+            }
+        } catch(error){
+            errorMsg = error.message;
+            return done (errorMsg);
         }
     }));
 
@@ -75,25 +136,38 @@ const initializePassport = () => {
     }));
 
     passport.use('github', new GitHubStrategy({
-        clientID: `${CLIENT_ID}`,
-        clientSecret: `${CLIENT_SECRET}`,
+        clientID: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
         callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
     }, async (accessToken, refreshToken, profile, done) => {
         try {
-            console.log({profile});
             let user = await userModel.findOne({ email: profile._json.email });
-            if (user) return done(null, user);
-            const newUser = {
-                first_name: profile._json.name,
-                last_name: '',
-                email: profile._json.email,
-                age: 0,
-                password: '',
+            if(!user){
+                user = {
+                    first_name: profile._json.name,
+                    last_name: '',
+                    email: profile._json.email,
+                    password: '',
+                }
+                user = await userModel.create(user);
             }
-            user = await userModel.create(newUser);
+            const userDTO = new UserDTO(user);
+            const jwt = generateToken(userDTO);
+            return done(null, jwt);
+        } catch(error){
+            return done ('Github login failure');
+        }
+    }));
+
+    passport.use('jwt', new JWTStrategy({
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: PRIVATE_KEY
+    }, async (jwt_payload, done) => {
+        try {
+            const user = jwt_payload.user;
             return done(null, user);
         } catch (error) {
-            return done({ message: "Error creating user" });
+            done(error);
         }
     }));
 
@@ -110,13 +184,5 @@ const initializePassport = () => {
         }
     });
 };
-
-const cookieExtractor = (req) =>{
-    let token = null;
-    if(req && req.cookies){
-        return token = req?.cookies['coderCookieToken'];
-    }
-    return token;
-}
 
 export default initializePassport;

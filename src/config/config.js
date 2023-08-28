@@ -31,5 +31,12 @@ export default{
     },
     factory:{
         persistence: process.env.PERSISTENCE
+    },
+    admin:{
+        user:process.env.ADMIN_USER,
+        password: process.env.ADMIN_PASSWORD
+    },
+    cookie:{
+        cookiePass:process.env.COOKIE_PASS
     }
 }

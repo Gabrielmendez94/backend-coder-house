@@ -36,7 +36,7 @@ export const updateCartById = async (req, res)=>{
             const cartId = (req.params.cid);
             const cartProd = await cartService.addProductsToCart(cartId, updatedProduct);
             res.status(201).send({ status: 1, msg: 'Cart updated successfully', cartProducts: cart.products });
-    }catch{
+    }catch(error){
             res.status(500).send({ status: 0, msg: error.message });
     }
 }
@@ -92,6 +92,7 @@ export const emptyCart = async (req, res) => {
             const purchaseCartResult = await cartService.checkoutCart(cartId, req.user.email);
             res.status(201).send({ status: 1, msg: 'Cart successfully purchased', purchaseCartResult: purchaseCartResult });
         } catch (error) {
+            console.log(error)
             res.status(500).json({ status: 0, error: error.message });
         }
     };

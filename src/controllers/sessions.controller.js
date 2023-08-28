@@ -1,24 +1,44 @@
-import userModel from '../dao/models/users.model.js';
-import passport from 'passport';
+import config from "../config/config.js";
 
-export const authenticateByGithub = (passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => {})
+const COOKIE_PASS = config.cookie.cookiePass; 
 
-export const authenticateGithubCallback = (passport.authenticate('github', { failureRedirect: 'api/sessions/login' }), async (req, res) => {
-    req.session.user = req.user;
-    res.redirect('/');
-})
-
-export const loggingOut = async (req, res)=>{
-    req.session.destroy();
-    res.send({status: 1, msg: 'Sesión cerrada correctamente'});
+const register = (req, res)=>{
+    res.send({ status: 1, msg: "New user registered" , user: req.user});
 }
 
-export const changePassword = async (req, res)=>{
-    const {email, password} = req.body;
-    if(!email || !password) return res.status(400).send({status: 'error', error: 'Incomplete Values'});
-    const user = await userModel.findOne({email});
-    if(!user) return res.status(404).send({status: 'error', error: 'User not found'});
-    const newHashedPassword = createHash(password);
-    await userModel.updateOne({_id: user._id}, {$set: {password: newHashedPassword}});
-    res.send({status: 'success', message: 'Contraseña restaurada'});
-}
+const login = (req, res)=>{
+    res.cookie(COOKIE_PASS, req.user, {httpOnly: true}).send({ status: 1, msg: 'Flowerier successfully logged in', jwt: req.user });
+};
+
+const restartpassword = (req, res) => {
+    res.send({ status: 1, msg: 'Password successfully reseted.' });
+};
+
+const logout = (req, res) => {
+    const jwtCookie = req.cookies[COOKIE_PASS];
+    if (!jwtCookie) {
+        return res.status(400).send({ status: 0, msg: 'User is not logged in.' });
+    }    
+    res.clearCookie(COOKIE_PASS).send({ status: 1, msg: 'User successfully logged out' });
+};
+
+const github = (req, res) => {
+};
+
+const githubCallback = (req, res) => {
+    res.cookie(COOKIE_PASS, req.user, { httpOnly: true }).redirect('/products');
+};
+
+const currentUser = (req, res) => {
+    res.send({ status: 1, msg: 'User logged in', user: req.user });
+};
+
+export default {
+    register,
+    login,
+    restartpassword,
+    logout,
+    github,
+    githubCallback,
+    currentUser
+};

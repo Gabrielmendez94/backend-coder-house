@@ -1,80 +1,21 @@
 import { Router } from 'express';
 import userModel from '../dao/models/users.model.js';
 import passport/*, { session }*/ from 'passport';
-import { createHash } from '../utils.js';
+import { createHash, passportCall } from '../utils.js';
 import config from '../config/config.js';
 import cookieParser from 'cookie-parser';
+import sessionsController from '../controllers/sessions.controller.js';
 
 const router = Router();
 const PRIVATE_KEY = config.jwtAuth.privateKey;
 router.use(cookieParser(PRIVATE_KEY));
 
-router.get('/github', passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => { });
-
-router.get('/githubcallback', passport.authenticate('github', { failureRedirect: '/api/sessions/login' }), async (req, res) => {
-    req.session.user = req.user;
-    res.redirect('/');
-});
-
-router.post('/auth-register', async (req, res) => {
-    const { first_name, last_name, email, birth_date, password } = req.body;
-    const exists = await userModel.findOne({ email });
-    if (exists) return res.status(400).send({ status: "error", error: "User already exists" });
-    const user = {
-        first_name,
-        last_name,
-        email,
-        birth_date,
-        password 
-    }
-    await userModel.create(user);
-    res.send({ status: "success", message: "User registered" });
-})
-
-router.post('/login', passport.authenticate('login', {session: false}), (req, res) => {
-    res.cookie('coderCookieToken', req.user, {httpOnly: true}).send({status: 'Success', message: 'Cookie set'});
-    /*const { email, password } = req.body;
-
-    const user = await userModel.findOne({ email });
-
-    if (!user) return res.status(400).send({ status: "error", error: "User does not exists" });
-
-    if (user.password !== password) {
-        return res.status(400).send({ status: "error", error: "User exists but password is incorrect" });
-    }
-    req.session.user = {
-        name: `${user.first_name} ${user.last_name}`,
-        email: user.email,
-        age: user.age
-    }
-
-    res.send({ status: "success", payload: req.session.user, message: "¡Primer logueo realizado! :)" });
-*/})
-
-router.post('/register', passport.authenticate('register', {session: false}), (req, res)=>{
-    res.send(req.user);
-});
-
-router.get('/current', passport.authenticate('current', {session: false}), (req, res)=>{
-    delete req.user.user.password;
-    res.send(req.user.user);
-})
-
-
-
-router.post('/logout', async (req, res)=>{
-    req.session.destroy();
-    res.send({status: 1, msg: 'Sesión cerrada correctamente'});
-});
-
-router.put('/restartpassword', async (req, res)=>{
-    const {email, password} = req.body;
-    if(!email || !password) return res.status(400).send({status: 'error', error: 'Incomplete Values'});
-    const user = await userModel.findOne({email});
-    if(!user) return res.status(404).send({status: 'error', error: 'User not found'});
-    const newHashedPassword = createHash(password);
-    await userModel.updateOne({_id: user._id}, {$set: {password: newHashedPassword}});
-    res.send({status: 'success', message: 'Contraseña restaurada'});
-})
+router.post('/register', passportCall('register'), sessionsController.register);
+router.post('/login', passportCall('login', {session: false}), sessionsController.login);
+router.put('/restartpassword', passportCall('restartpassword'), sessionsController.restartpassword);
+router.post('/logout', sessionsController.logout);
+router.get('/github', passportCall('github', {scope: ['user: email']}), sessionsController.github);
+router.get('/githubcallback', passportCall('github'), sessionsController.githubCallback);
+router.get('/current', passportCall('jwt', {session: false}), sessionsController.currentUser);
 
 export default router;

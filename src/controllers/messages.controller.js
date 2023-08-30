@@ -1,22 +1,24 @@
-import MessagesManager from '../dao/mongo/messagesManager.js';
+import MessageService from "../services/messages.service.js";
 
-const MessageManager = new MessagesManager();
+const messageService = new MessageService();
 
-export const getAllMessages = async (req, res) => {
+const getMessages = async (req, res, next) => {
     try {
-        const messages = await MessageManager.getMessages();
+        const messages = await messageService.getAllMessages();
         res.send({status: 1, messages: messages});
     } catch (error) {
-        res.status(500).send({status: 0, msg: error.message});
+        next(error)
+    }
+};
+
+const addMessage = async (req, res, next) => {
+    try {
+        const { message } = req.body;
+        const newMessage = await messageService.addMessage(req.user.email, message  )
+        res.send({status: 1, msg: 'Message added successfully', message: newMessage});
+    } catch (error) {
+        next(error)
     }
 }
 
-export const createNewMessage = async (req, res) => {
-    try {
-        const { user, message } = req.body;
-        const newMessage = await MessageManager.addMessage(user, message);
-        res.send({status: 1, msg: 'Message added successfully', message: newMessage});
-    } catch (error) {
-        res.status(500).send({status: 0, msg: error.message});
-    }
-}
+export default {getMessages, addMessage};

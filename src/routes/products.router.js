@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { createNewProduct, deleteProductById, getAllProducts, getProductByID, updateProductById } from "../controllers/products.controller.js";
+import { autorizacion } from "../utils.js";
 
 const router = Router();
 
-router.get('/', getAllProducts);
-router.get('/:pid', getProductByID);
-router.post('/', createNewProduct);
-router.put('/:pid', updateProductById);
-router.delete('/:pid', deleteProductById);
+router.get('/', autorizacion(['admin', 'user']), getAllProducts);
+router.get('/:pid', autorizacion(['admin', 'user']), getProductByID);
+router.post('/', autorizacion('admin'), createNewProduct);
+router.put('/:pid', autorizacion('admin'), updateProductById);
+router.delete('/:pid', autorizacion('admin'), deleteProductById);
 
 export default router;

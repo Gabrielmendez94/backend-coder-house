@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { createNewMessage, getAllMessages } from '../controllers/messages.controller.js';
+import messagesController from '../controllers/messages.controller.js';
+import { autorizacion } from '../utils.js';
 
 const router = Router();
 
-router.get('/', getAllMessages);
-router.post('/', createNewMessage);
+router.get('/', autorizacion(['admin', 'user']), messagesController.getMessages);
+router.post('/', autorizacion(['user']), messagesController.addMessage);
 
 export default router;

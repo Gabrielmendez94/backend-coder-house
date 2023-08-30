@@ -35,8 +35,23 @@ export const cookieExtractor = (req) =>{
 }
 
 export const autorizacion = (role) => {
+
+    return async(req, res, next)=>{
+        const authHeader = req.headers.coderCookieToken;
+        if(!authHeader) return res.status(401).send({ status: 0, msg: 'Unauthorized' });
+        const token = authHeader.split('')[1];
+        jwt.verify(token, COOKIE_PASS, (error, credentials)=>{
+            if(error) return res.status(401).send({ status: 0, msg: 'Unauthorized' });
+            req.user = credentials;
+            if(role !== req.user.admin) return res.send({status: 0, message: 'Forbidden'});
+            next();
+        })
+    }
+    
+    /*
     return async (req, res, next) => {
         const token = await cookieExtractor(req);
+        console.log(token)
         if (!token) {
             return res.status(401).send({ status: 0, msg: 'Unauthorized' });
         }
@@ -59,5 +74,4 @@ export const autorizacion = (role) => {
         } catch (error) {
             return res.status(401).send({ status: 0, msg: 'Unauthorized' });
         }
-    };
-};
+    */};

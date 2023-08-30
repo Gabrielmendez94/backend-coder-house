@@ -7,6 +7,7 @@ const messagesSchema = new Schema({
     user: {
         type: String,
         required: true,
+        match: /^\S+@\S+\.\S+$/
     },
     message: {
         type: String,

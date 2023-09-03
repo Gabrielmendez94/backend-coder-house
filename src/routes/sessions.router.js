@@ -1,7 +1,5 @@
 import { Router } from 'express';
-import userModel from '../dao/models/users.model.js';
-import passport/*, { session }*/ from 'passport';
-import { createHash, passportCall } from '../utils.js';
+import { passportCall } from '../utils.js';
 import config from '../config/config.js';
 import cookieParser from 'cookie-parser';
 import sessionsController from '../controllers/sessions.controller.js';

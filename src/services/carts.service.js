@@ -10,13 +10,9 @@ export default class CartService {
         this.ticketService = new TicketService();
     }
 
-    createCart = async (productId) => {
+    createCart = async () => {
         try {
-            const product = await this.productService.getProductById(productId);
-            if (!product) {
-                throw new Error('Product not found');
-            }
-            const newCart = await this.cartRepository.createCart([{ product: product._id, quantity: 1 }]);
+            const newCart = await this.cartRepository.createCart();
             return newCart;
         } catch (error) {
             throw new Error(`Failed to add cart: ${error.message}`);

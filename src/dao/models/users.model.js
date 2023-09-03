@@ -9,7 +9,6 @@ const schema = new mongoose.Schema({
     },
     last_name: {
         type: String,
-        required: true,
     },
     email: {
         type: String,
@@ -18,19 +17,19 @@ const schema = new mongoose.Schema({
     },
     birth_date: {
         type: Date,
-        required: true
     },
     password: {
         type: String,
-        required: true
     },
     cart: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Carts"
+        ref: "Carts",
+        required: false
     },
     user_role: {
-        type: Boolean,
-        default: false
+        type: String,
+        enum: ['admin', 'user'],
+        default: 'user'
     }
 
 })

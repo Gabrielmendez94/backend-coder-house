@@ -17,12 +17,12 @@ export default class CartManager{
     }
 
     async getCartById(id){
-        const cartID = await this.cartModel.findById(id);
-        if(!cartID){
-            return "Not Found"
-        }else {
-            return cartID.products;
-        }
+      try{
+        const cartID = await this.cartModel.findById(id).lean();
+        return cartID;
+      }catch(error) {
+        throw new error("Not found");
+      }
     }
 
     async getCarts() {

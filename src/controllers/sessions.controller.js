@@ -7,7 +7,7 @@ const register = (req, res)=>{
 }
 
 const login = (req, res)=>{
-    res.cookie(COOKIE_PASS, req.user, {httpOnly: true}).send({ status: 1, msg: 'Flowerier successfully logged in', jwt: req.user });
+    res.cookie(COOKIE_PASS, req.user, {httpOnly: true}).send({ status: 1, msg: 'User successfully logged in', jwt: req.user });
 };
 
 const restartpassword = (req, res) => {

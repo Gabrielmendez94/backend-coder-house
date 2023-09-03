@@ -36,11 +36,11 @@ export class ProductsDaoFactory{
     static getDao(){
         switch(PERSISTENCE){
             case 'MONGO':
-                return new MessagesManager();
+                return new ProductManager();
             case 'FILE':
                 throw new Error('File persistence not implemented yet');
             default:
-                return new MessagesManager();
+                return new ProductManager();
         }
     }
 }
@@ -49,11 +49,11 @@ export class MessagesDaoFactory{
     static getDao(){
         switch(PERSISTENCE){
             case 'MONGO':
-                return new ProductManager();
+                return new MessagesManager();
             case 'FILE':
                 throw new Error('File persistence not implemented yet');
             default:
-                return new ProductManager();
+                return new MessagesManager();
         }
     }
 }

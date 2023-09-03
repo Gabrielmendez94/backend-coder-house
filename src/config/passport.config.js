@@ -9,7 +9,7 @@ import { createHash, isValidPassword, cookieExtractor } from '../utils.js';
 import UserDTO from '../dto/users.dto.js';
 
 //Env var
-const PRIVATE_KEY = config.jwtAuth.privateKey, CLIENT_ID = config.githubAuth.clientId, CLIENT_SECRET = config.githubAuth.clientSecret, ADMIN_USER= config.admin.user, ADMIN_PASSWORD=config.admin.password;
+const PRIVATE_KEY = 'CoderkeyFeliz'/*config.jwtAuth.privateKey*/, CLIENT_ID = config.githubAuth.clientId, CLIENT_SECRET = config.githubAuth.clientSecret, ADMIN_USER= config.admin.user, ADMIN_PASSWORD=config.admin.password;
 
 
 //JWT
@@ -28,15 +28,16 @@ const initializePassport = () => {
         usernameField: 'email',
         passReqToCallback: true
     }, async (req, username, password, done)=>{
+        let errorMsg;
         try{
             const {first_name, last_name, email, birth_date, role} = req.body;
             if(username.toLowerCase() === ADMIN_USER.toLowerCase()){
-                errorMsg = "Flowerier already exists";
+                errorMsg = "User already exists";
                 return done(null, false, errorMsg );                
             }
             const exists = await userModel.findOne({ email: { $regex: new RegExp(`^${username}$`, 'i') } });
             if(exists){
-                errorMsg = "Flowerier already exists";
+                errorMsg = "User already exists";
                 return done(null, false, errorMsg );
             }
             const newUser = {
@@ -78,7 +79,7 @@ const initializePassport = () => {
             }else{
                 const user = await userModel.findOne({ email: { $regex: new RegExp(`^${username}$`, 'i') } });
                 if(!user){
-                    errorMsg = "Wrong flowerier";
+                    errorMsg = "Wrong User";
                     return done(null, false, errorMsg );                    
                 }
                 if (!isValidPassword(user, password)) {
@@ -96,7 +97,7 @@ const initializePassport = () => {
         }
     }));
 
-    passport.use('reserPassword', new LocalStrategy({
+    passport.use('resetPassword', new LocalStrategy({
         usernameField: 'email',
         passwordField: 'newPassword',
         passReqToCallback: true,
@@ -109,7 +110,7 @@ const initializePassport = () => {
             } else{
                 const user = await userModel.findOne({email: {$regex: new RegExp(`^${username}$`, 'i')}});
                 if(!user){
-                    errorMsg = "Wrong flowerier";
+                    errorMsg = "Wrong user";
                     return done(null, false, errorMsg );                    
                 }
                 const newHashedPassword = createHash(password);

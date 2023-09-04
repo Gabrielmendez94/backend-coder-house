@@ -8,22 +8,21 @@ export default class CartsRepository {
         return newCart;
     }
 
-    getCarts = async () =>{
+/*    getCarts = async () =>{
         const getCarts = await this.dao.getCarts();
         return getCarts;
-    }
-
-    getCartById = async (cartId) => {
-        const cart = await this.dao.getCartById(cartId);
-        return cart;
     }
 
     addToCart = async(cartId, prodId)=>{
         const addCart = await this.dao.addToCart(cartId, prodId);
         return addCart;
+    }*/
+
+    getCartById = async (cartId) => {
+        const cart = await this.dao.getCartById(cartId);
+        return cart;
     }
-
-
+    
     updateCartProducts = async (cartId, newCartProducts) => {
         const cart = await this.dao.updateCartProducts(cartId, newCartProducts);
         return cart;

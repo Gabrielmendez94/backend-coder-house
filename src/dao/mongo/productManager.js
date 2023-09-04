@@ -14,16 +14,42 @@ export default class ProductManager {
         }
     }
 
-    getProducts = async (limit = null) =>{
+    getProducts = async (limit = 10, page = 1, sort, category, available) =>{
         try{
             let query = this.productModel.find();
-            if (limit){
-                query = query.limit(parseInt(limit));
+            if (category){
+              const trimmedCategory = category.trim();
+              const categoryRegex = new RegExp(`^${trimmedCategory}$`, 'i');
+                query = query.where('category'.equals(categoryRegex));
             }
-            const products = await query.exec();
+            if (available){
+              const lowerAvailable = available.toLowerCase();
+              if (lowerAvailable === 'true') {
+                query = query.where('stock').gt(0);
+              } else {
+                query = query.where('stock').equals(0);
+              }
+            }
+            if (sort) {
+              const lowerSort = sort.toLowerCase();
+              if (lowerSort === 'asc') {
+                query = query.sort({ price: 1 });
+              } else {
+                query = query.sort({ price: -1 });
+              }
+            }
+
+            const products = await this.productsModel.paginate(query, {
+              limit: parseInt(limit) || 10,
+              lean: true,
+              page: parseInt(page) || 1,
+              customLabels: {
+                docs: 'products',
+                totalDocs: 'totalProducts',
+              }
+            });
             return products;
-        }
-        catch(error){
+          } catch(error){
             throw new Error (`Failed to retrieve: ${error.message}`);
         }
     }
@@ -32,9 +58,6 @@ export default class ProductManager {
 
         try {
             const productID = await this.productModel.findById(idNumber);
-            if (!productID){
-                throw new Error ('Product not found');
-            }
             return productID;
         } catch(error){
             throw new Error (`Falied to retrieve product: ${error.message}`);
@@ -52,15 +75,7 @@ export default class ProductManager {
 
     updateProduct = async (productId, updatedFields) => {
         try {
-          const { code, price, stock, thumbnails, ...otherFields } = updatedFields;
-    
-          if (code) {
-            const existingProduct = await this.productModel.findOne({ code: code });
-            if (existingProduct && existingProduct._id.toString() !== productId) {
-              throw new Error('The specified code is in use by another existing product');
-            }
-          }
-    
+          const { code, price, stock, thumbnail, ...otherFields } = updatedFields;
           const updatedProduct = await this.productModel.findByIdAndUpdate(
             productId,
             {
@@ -69,16 +84,15 @@ export default class ProductManager {
                 ...(code && { code }),
                 ...(price && { price }),
                 stock: stock !== undefined ? stock : 0,
-                ...(thumbnails && { thumbnails }),
+                ...(thumbnail && { thumbnail }),
               },
             },
             { new: true, runValidators: true }
           );
-    
+          
           if (!updatedProduct) {
             throw new Error('Product not found');
           }
-      
           return updatedProduct;
     
         } catch (error) {

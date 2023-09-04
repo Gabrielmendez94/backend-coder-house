@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2';
 
 const collectionProducts = "products" ;
@@ -15,27 +15,39 @@ const prodSchema = new mongoose.Schema({
     required: true
    },
 
+   code:{
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+         validator: async function(value){
+            const count = await mongoose.models[collectionProducts].countDocuments({code: value});
+            return count === 0;
+         },
+         message: 'The specified code is in use by another existing product',
+      }      
+   },
    price : {
     type: Number,
     required: true,
-    min: [0, 'el precio no puede ser negativo']
+    min: [0, 'Price cannot be negative']
    },
-
-   thumbnail : {
-    type: String,
-    required: true
+   status:{
+      type: Boolean,
+      default: true,
    },
-
-   code : {
-    type: Number,
-    required: true,
-    unique: true
-   },
-
    stock : {
-    type: Number,
-    required: true,
-    min: [0, 'Stock cannot be negative']
+      type: Number,
+      required: true,
+      min: [0, 'Stock cannot be negative']
+     },
+   category: {
+      type: String,
+      required: true
+   },
+   thumbnail : {
+    type: [String],
+    default: []
    },
 })
 

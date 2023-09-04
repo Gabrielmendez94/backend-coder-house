@@ -82,7 +82,7 @@ export default class ProductService {
 
     productFieldsValidation = async (product) => {
         try {
-            const allowedFields = ['title', 'description', 'price', 'thumbnail', 'code', 'stock'];
+            const allowedFields = ['title', 'description', 'code', 'price', 'stock', 'category', 'thumbnail'];
             const receivedFields = Object.keys(product);
             const isValidOperation = receivedFields.every((field) => allowedFields.includes(field));
             if (!isValidOperation) {

@@ -15,7 +15,7 @@ export const getAllProducts = async(req, res)=>{
      }
  }*/
 
-export const getAllProducts = async (req, res) => {
+export const getAllProducts = async (req, res, next) => {
     try {
         const { limit = 10, page = 1, sort, category, available } = req.query;
         // Get baseUrl for navigation links
@@ -23,33 +23,40 @@ export const getAllProducts = async (req, res) => {
         const products = await productService.getProducts(limit, page, sort, category, available, baseUrl);
         res.send({ status: 1, ...products });
     } catch (error) {
-        res.status(500).send({ status: 0, msg: error.message });
+        next(error);
     }
 };
 
- export const getProductByID = async (req,res)=>{
+ export const getProductByID = async (req,res, next)=>{
     try {
         const productId = req.params.pid;
         const product = await productService.getProductById(productId);
         res.send({status: 1, product: product});
     } catch(error){
-        res.status(404).send({status: 0, msg: error.message});
+        next(error);
     }
 }
 
-export const createNewProduct = async (req, res)=>{ 
+export const createNewProduct = async (req, res, next)=>{ 
     try{
         const newProducts = req.body;
+        const files = req.files;
+        const filesUrls = files.map(file => `http://localhost:8080/files/uploads${file.filename}`);
+        if(filesUrls.length > 0) {
+            newProducts.thumbnail = filesUrls;
+        } else{
+            newProducts.thumbnail = [];
+        }
         const newProduct = await productService.addProduct(newProducts); 
 //        io.emit('addProducts', productAdded);
         res.send({ status: 1, msg: 'Product added successfully', product: newProduct });
     }
     catch (error){
-        res.status(500).send({ status: 0, msg: error.message });
+        next(error);
     }
 }
 
-export const updateProductById = async(req, res)=>{
+export const updateProductById = async(req, res, next)=>{
     try{
         const productId = req.params.pid;
         const dataToUpdate = req.body;
@@ -57,18 +64,18 @@ export const updateProductById = async(req, res)=>{
         const updatedProduct = await productService.updateProduct(productId, dataToUpdate);
         res.send({ status: 1, msg: 'Product updated successfully', product: updatedProduct });   
     } catch(error){
-         res.status(404).send({status: 0, msg: error.message})
+        next(error);
     }
 //    io.emit('addProducts', productAdded);
 }
 
-export const deleteProductById = async (req, res)=>{
+export const deleteProductById = async (req, res, next)=>{
     try{
         const productId = req.params.pid;
         await productService.deleteProduct(productId);
         res.send({ status: 1, msg: 'Product deleted successfully' });
     } catch (error){
-        res.status(404).send({ status: 0, msg: error.message });
+        next(error);
     }
 //    io.emit('addProducts', productAdded);
 }

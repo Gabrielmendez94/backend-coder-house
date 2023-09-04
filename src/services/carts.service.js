@@ -19,7 +19,7 @@ export default class CartService {
         }
     }
 
-    getCarts = async () =>{
+/*    getCarts = async () =>{
         try{
             const getCarts = await this.cartRepository.getCarts();
             return getCarts;
@@ -27,7 +27,7 @@ export default class CartService {
             throw new Error(`Failed to view cart: ${error.message}`);
         }
     }
-
+*/
     getCartById = async (cartId) => {
         try {
             const cart = await this.cartRepository.getCartById(cartId);

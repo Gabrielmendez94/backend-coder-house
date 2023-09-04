@@ -1,4 +1,5 @@
 import { ticketsRepository } from "../repositories/index.js";
+import shortid from "shortid";
 
 export default class TicketService {
     constructor() {

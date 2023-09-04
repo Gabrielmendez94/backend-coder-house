@@ -24,7 +24,7 @@ export default class CartManager{
         throw new error("Not found");
       }
     }
-
+/*
     async getCarts() {
         try {
           const cartsMgd = await this.cartModel.find();
@@ -32,8 +32,22 @@ export default class CartManager{
         } catch (error) {
           throw new error("Not found");
         }
-    }
+    }*/
 
+    async updatedCartProducts(cartId, newCartProducts){
+      try{
+        const cart = await this.cartModel.findById(cartId);
+        if(!newCartProducts){
+          throw new Error("Cart not found");          
+        }
+        cart.products = newCartProducts;
+        await cart.save();
+        return cart;
+      } catch(error){
+        throw new Error("Cart not found");  
+      }
+    }
+/*
     async addToCart(cartId, prodId) {
         try {
           const cart = await this.cartModel.findById(cartId);
@@ -127,5 +141,5 @@ export default class CartManager{
       throw new Error("Error al actualizar la cantidad del producto en el carrito");
     }
   }
-
+*/
 }

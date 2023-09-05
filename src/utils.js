@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import config from './config/config.js';
 import passport from 'passport';
 import  jwt  from 'jsonwebtoken';
+import {faker} from '@faker-js/faker';
 
 const COOKIE_PASS ='coderCookieToken' /*config.cookie.cookiePass*/, PRIVATE_KEY = config.jwtAuth.privateKey;
 
@@ -49,11 +50,29 @@ export const autorizacion = (role) => {
     }
 };
 
-    export const jwtVerify = (token) =>{
-        try{
-            const decodedToken = jwt.verify(token, PRIVATE_KEY);
-            return decodedToken;
-        } catch (error){
-            return false;
-        }
+export const jwtVerify = (token) =>{
+    try{
+        const decodedToken = jwt.verify(token, PRIVATE_KEY);
+        return decodedToken;
+    } catch (error){
+        return false;
     }
+}
+
+export const generateMocks = () =>{
+    let products = [];
+    for (let i = 0; i < 50; i++){
+        let newProd = {
+            title: faker.commerce.productName(),
+            description: faker.commerce.productDescription(),
+            code: faker.string.alphanumeric({length: {min: 5, max: 10}}),
+            price: faker.commerce.price({ dec: 0, symbol: '$' }),
+            stock: faker.string.numeric(3),
+            category: faker.commerce.department(),
+            thumbnail: faker.img.url(),
+            id: faker.database.mongodbObjectId(),                        
+        }
+        products.push(newProd);
+    }
+    return products;
+}

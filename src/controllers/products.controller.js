@@ -1,7 +1,9 @@
-import ProductManager from "../dao/mongo/productManager.js";
+import CustomError from "../services/errors/custom.error.js";
+import EErrors from "../services/errors/enums.error.js";
+import { generateProductAddError } from "../services/errors/info.error.js";
 import ProductService from "../services/products.service.js";
 
-const productService = new ProductService(), newProduct = new ProductManager();
+const productService = new ProductService();
 /*
 export const getAllProducts = async(req, res)=>{
 
@@ -38,22 +40,28 @@ export const getAllProducts = async (req, res, next) => {
 }
 
 export const createNewProduct = async (req, res, next)=>{ 
-    try{
         const newProducts = req.body;
-        const files = req.files;
+       /* const files = req.files;
         const filesUrls = files.map(file => `http://localhost:8080/files/uploads${file.filename}`);
         if(filesUrls.length > 0) {
             newProducts.thumbnail = filesUrls;
         } else{
             newProducts.thumbnail = [];
-        }
-        const newProduct = await productService.addProduct(newProducts); 
-//        io.emit('addProducts', productAdded);
+        }*/
+        const newProduct = await productService.addProduct(newProducts);
+        if(newProduct){
+        //io.emit('addProducts', productAdded);
         res.send({ status: 1, msg: 'Product added successfully', product: newProduct });
-    }
-    catch (error){
-        next(error);
-    }
+        }
+        else{
+            CustomError.createError({
+                name: 'Request error',
+                cause: generateProductAddError(),
+                code: EErrors.INVALID_TYPES_ERROR,
+                message: 'Fail to add product.'
+            })
+        }
+
 }
 
 export const updateProductById = async(req, res, next)=>{

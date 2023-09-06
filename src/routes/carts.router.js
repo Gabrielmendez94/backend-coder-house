@@ -4,7 +4,7 @@ import  {autorizacion}  from "../utils.js";
 const router = Router();
 
 router.post("/", autorizacion(['user']), createNewCart);        
-router.get("/:cid", /*autorizacion(['admin', 'user']), */getCartById);
+router.get("/:cid", autorizacion(['admin', 'user']), getCartById);
 router.put('/:cid', autorizacion(['user']), updateCartById);
 router.post("/:cid/product/:pid", autorizacion(['user']), addingProductsToAnExistingCart);
 router.put('/:cid/product/:pid', autorizacion(['user']), updatingProductsFromAnExistingCart);

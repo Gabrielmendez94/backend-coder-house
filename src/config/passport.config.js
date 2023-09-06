@@ -9,13 +9,13 @@ import { createHash, isValidPassword, cookieExtractor } from '../utils.js';
 import UserDTO from '../dto/users.dto.js';
 
 //Env var
-const PRIVATE_KEY = 'CoderkeyFeliz'/*config.jwtAuth.privateKey*/, CLIENT_ID = config.githubAuth.clientId, CLIENT_SECRET = config.githubAuth.clientSecret, ADMIN_USER= config.admin.user, ADMIN_PASSWORD=config.admin.password;
+const COOKIE_PASS = 'coderCookieToken'/*config.jwtAuth.privateKey*/, CLIENT_ID = config.githubAuth.clientId, CLIENT_SECRET = config.githubAuth.clientSecret, ADMIN_USER= config.admin.user, ADMIN_PASSWORD=config.admin.password;
 
 
 //JWT
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
-export const generateToken = user => token.sign({user}, PRIVATE_KEY, {expiresIn: '1d'});
+export const generateToken = user => token.sign({user}, COOKIE_PASS, {expiresIn: '1d'});
 
 //Local
 const LocalStrategy = local.Strategy;
@@ -126,7 +126,7 @@ const initializePassport = () => {
 
     passport.use('current', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: PRIVATE_KEY
+        secretOrKey: COOKIE_PASS
     }, async (jwt_payload, done)=>{
         try{
             const filter = new UserDTO(jwt_payload);
@@ -162,7 +162,7 @@ const initializePassport = () => {
 
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: PRIVATE_KEY
+        secretOrKey: COOKIE_PASS
     }, async (jwt_payload, done) => {
         try {
             const user = jwt_payload.user;

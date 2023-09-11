@@ -11,21 +11,27 @@ import viewsRouter from './routes/views.router.js';
 import mailingRouter from './routes/mailing.router.js';
 import twilioRouter from './routes/twilio.router.js';
 import mockingRouter from './routes/mocking.routes.js';
+import logsRouter from './routes/logs.router.js';
 import config from './config/config.js';
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import { productsUpdated, chat } from './utils/socketUtils.js';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
+import { addLogger, loggerInfo } from './utils/loggers/logger.js';
 
 
 const app = express();
 const PORT = config.port, MONGO_PASS = config.dbPswd, MONGO_USER = config.dbUser, MONGO_HOST =config.dbHost;
 
+app.use(addLogger);
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-const httpServer = app.listen(PORT,()=> console.log(`Servidor escuchando en el puerto ${PORT}`));
+const httpServer = app.listen(PORT,()=> {
+    const info = loggerInfo();
+    info.info(`The server is working correctly on the port ${PORT}`);
+});
 
 //MONGO CONNECTION
 const MONGO = `mongodb+srv://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}/ecommerce`;
@@ -68,4 +74,5 @@ app.use('/api/sessions', sessionsRouter);
 app.use('/api/mailing', mailingRouter);
 app.use('/api/twilio', twilioRouter);
 app.use('/api/mocking', mockingRouter);
+app.use('/api/logs', logsRouter);
 app.use('/', viewsRouter);

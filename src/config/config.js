@@ -4,6 +4,7 @@ dotenv.config();
 
 export default{
     port: process.env.PORT,
+    baseurl: process.env.BASE_URL,
     enviroment: process.env.NODE_ENV,
     dbUser: process.env.MONGO_USER,
     dbPswd: process.env.MONGO_PSWD,

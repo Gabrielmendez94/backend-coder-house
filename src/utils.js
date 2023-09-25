@@ -43,7 +43,7 @@ export const autorizacion = (role) => {
         jwt.verify(authHeader, COOKIE_PASS, (error, credentials)=>{
             if(error) return res.status(401).send({ status: 0, msg: 'Unauthorized' });
             req.user = credentials;
-            if(!role.find((element)=> element === req.user.user.role)) return res.send({status: 0, message: 'Forbidden'});
+            if(!role.find((element)=> element === req.user.user_role)) return res.send({status: 0, message: 'Forbidden'});
             next();
         })
     }

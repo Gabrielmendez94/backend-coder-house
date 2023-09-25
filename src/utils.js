@@ -6,7 +6,7 @@ import passport from 'passport';
 import  jwt  from 'jsonwebtoken';
 import {faker} from '@faker-js/faker';
 
-const COOKIE_PASS ='coderCookieToken' /*config.cookie.cookiePass*///, PRIVATE_KEY = config.jwtAuth.privateKey;
+const COOKIE_PASS ='coderCookieToken' /*config.cookie.cookiePass*/, PRIVATE_KEY = config.jwtAuth.privateKey;
 
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 export const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password);
@@ -55,6 +55,18 @@ export const jwtVerify = (token) =>{
         return decodedToken;
     } catch (error){
         return false;
+    }
+}
+
+export const validarToken = (req, res, next) =>{
+    try{
+        const token = req.params.token;
+        jwt.verify(token, PRIVATE_KEY);
+        const data = jwt.decode(token);
+        req.email = data.email;
+        next();
+    } catch(e){
+        res.send({message: e});
     }
 }
 

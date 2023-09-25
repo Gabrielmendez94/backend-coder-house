@@ -57,17 +57,19 @@ export class UsersController{
                 subject: 'Recuperar Pass',
                 html: `<h1>Para recuperar tu pass, haz click en el boton de abajo</h1>
                         <hr>
-                        <a href="http://${BASE_URL}:${PORT}/restorepass/${jwt}">CLICK AQUI</a>
+                        <a href="http://${BASE_URL}:${PORT}/api/sessions/restore-pass/${jwt}">CLICK AQUI</a>
                 `,
             });
         } catch(e){
             res.json({error: e});
         }
     }
-
     createJwt(email){
         return token.sign({email}, PRIVATE_KEY, {expiresIn: '1h'})
 
+    }
+    updateUser(){
+        console.log('Password changed');
     }
 }
 

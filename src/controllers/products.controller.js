@@ -50,6 +50,8 @@ export const createNewProduct = async (req, res, next)=>{
         }*/
         const newProduct = await productService.addProduct(newProducts);
         if(newProduct){
+            newProduct.owner = req.user.email;
+            await newProduct.save();
         //io.emit('addProducts', productAdded);
         res.send({ status: 1, msg: 'Product added successfully', product: newProduct });
         }

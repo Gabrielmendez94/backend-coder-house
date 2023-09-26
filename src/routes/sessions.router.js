@@ -28,8 +28,9 @@ router.post('/pass-change/:token', validarToken, async (req, res)=>{
     if(!req.params.token){
         res.redirect('/send-recover-email/:email');
     }
-    const {password} = req.body;
-    const {email} = req;
+    const password = req.body;
+    console.log(password);
+    const email = req;
     const hashedPassword = createHash(password);
     await userModel.updateOne({email: email}, {$set: {password: hashedPassword}});
     res.send({message: 'Password Changed'});

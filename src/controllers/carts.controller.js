@@ -1,7 +1,8 @@
 import CartService from "../services/carts.service.js";
+import ProductService from "../services/products.service.js";
 
 const cartService = new CartService();
-
+const productService = new ProductService();
 export const createNewCart = async (req, res, next) => {
         try{
                 const newCart = await cartService.createCart();
@@ -36,23 +37,20 @@ export const addingProductsToAnExistingCart = async (req, res, next) => {
     try{
             const cartId = req.params.cid;
             const productId = req.params.pid;
-            const cartProd = await cartService.addToCart(cartId, productId);
-            res.status(201).send({ status: 1, msg: 'Product added to cart successfully', cartProd });
+
+            if(req.user.role === "premium"){
+                const product = await productService.getProductById(productId);
+                if(product.owner === req.user.email){
+                    return res.status(401).send("A premium user cannot add their own product to the cart.");
+                }else{
+                    const cartProd = await cartService.addToCart(cartId, productId);
+                    res.status(201).send({ status: 1, msg: 'Product added to cart successfully', cartProd });
+                }       
+            }
     }catch(error){
         next(error);
     }
 }
-
-export const removeProductFromCart = async (req, res, next) =>{
-    try{
-        const cartId = req.params.cartId;
-        const productId = req.params.productId;
-        const cart = await cartService.removeFromCart(cartId, productId);
-        res.status(201).send({ status: 1, msg: 'Product deleted from cart successfully', cart });
-    }catch(error){
-        next(error);
-    }
-};
 
 export const updatingProductsFromAnExistingCart = async (req, res, next) => {
     try {
@@ -65,6 +63,19 @@ export const updatingProductsFromAnExistingCart = async (req, res, next) => {
         next(error)
     }
 };
+
+export const removeProductFromCart = async (req, res, next) =>{
+    try{
+        const cartId = req.params.cartId;
+        const productId = req.params.productId;
+        const cart = await cartService.removeFromCart(cartId, productId);
+        res.status(201).send({ status: 1, msg: 'Product deleted from cart successfully', cart });
+    }catch(error){
+        next(error);
+    }
+};
+
+
 
 export const emptyCart = async (req, res, next) => {
         const cartId = req.params.cartId;

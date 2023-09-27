@@ -39,15 +39,8 @@ export const getAllProducts = async (req, res, next) => {
     }
 }
 
-export const createNewProduct = async (req, res, next)=>{ 
+export const createNewProduct = async (req, res)=>{ 
         const newProducts = req.body;
-       /* const files = req.files;
-        const filesUrls = files.map(file => `http://localhost:8080/files/uploads${file.filename}`);
-        if(filesUrls.length > 0) {
-            newProducts.thumbnail = filesUrls;
-        } else{
-            newProducts.thumbnail = [];
-        }*/
         const newProduct = await productService.addProduct(newProducts);
         if(newProduct){
             newProduct.owner = req.user.email;
@@ -72,7 +65,14 @@ export const updateProductById = async(req, res, next)=>{
         const dataToUpdate = req.body;
         if(Object.keys(req.body).length === 0) throw new Error('Empty request body');
         const updatedProduct = await productService.updateProduct(productId, dataToUpdate);
-        res.send({ status: 1, msg: 'Product updated successfully', product: updatedProduct });   
+
+        if(req.user.role === "admin" || (req.user.role === "premium" & updatedProduct.owner === req.user.email)){
+            if(updatedProduct){
+                res.send({ status: 1, msg: 'Product updated successfully', product: updatedProduct });
+            } else{
+                res.status(404).send(`There is no product with the id ${productId}`);
+            }
+        }
     } catch(error){
         next(error);
     }
@@ -82,8 +82,15 @@ export const updateProductById = async(req, res, next)=>{
 export const deleteProductById = async (req, res, next)=>{
     try{
         const productId = req.params.pid;
-        await productService.deleteProduct(productId);
-        res.send({ status: 1, msg: 'Product deleted successfully' });
+        const productToDelete = await productService.deleteProduct(productId);
+        
+        if( req.user.role === "admin" || (req.user.role === "premium" && productToDelete.owner === req.user.email)){
+            if(productToDelete){
+                res.send({ status: 1, msg: 'Product deleted successfully' });
+            }else{
+                res.status(404).send(`There is no product with the id ${productId}`);
+            }
+        }
     } catch (error){
         next(error);
     }

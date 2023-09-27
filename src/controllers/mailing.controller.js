@@ -20,7 +20,7 @@ export const sendingEmail = async (req, res)=>{
             to: destination,
             subject: 'Mail de prueba Gabi',
             html: `<div>
-                        <h1>Porreo enecprónico para mi osita meme</h1>
+                        <h1>Mailing</h1>
                         <img src="cid:bear-image"/>
                     </div>`,
             attachments:[{

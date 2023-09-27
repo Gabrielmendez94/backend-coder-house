@@ -97,7 +97,7 @@ const initializePassport = () => {
         }
     }));
 
-    passport.use('resetPassword', new LocalStrategy({
+    passport.use('restartpassword', new LocalStrategy({
         usernameField: 'email',
         passwordField: 'newPassword',
         passReqToCallback: true,

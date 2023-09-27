@@ -30,11 +30,13 @@ router.post('/pass-change/:token', validarToken, async (req, res)=>{
     }
     const password = req.body;
     console.log(password);
-    const email = req;
+    const email = req.body.email;
     const hashedPassword = createHash(password);
     await userModel.updateOne({email: email}, {$set: {password: hashedPassword}});
     res.send({message: 'Password Changed'});
 });
+
+router.post('/premium/:uid', sessionsController.changeUserRole);
 
 
 export default router;

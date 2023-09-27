@@ -1,6 +1,7 @@
 import config from "../config/config.js";
 import {default as token} from 'jsonwebtoken';
 import nodemailer from 'nodemailer'
+import userModel from "../dao/models/users.model.js";
 
 const COOKIE_PASS = config.cookie.cookiePass, PRIVATE_KEY = config.jwtAuth.privateKey, BASE_URL = config.baseurl, PORT = config.port;
 
@@ -34,6 +35,31 @@ const githubCallback = (req, res) => {
 const currentUser = (req, res) => {
     res.send({ status: 1, msg: 'User logged in', user: req.user });
 };
+
+const changeUserRole = (req, res) =>{
+    try{
+        const userId = req.params.uid;
+        const updateRole = req.body.role;
+
+        if(["user", "premium"].includes(updateRole)){
+            const updateUser = userModel.findByIdAndUpdate(
+                userId,
+                {userRole: updateRole},
+                {new: true}
+            );
+
+            if(updateUser){
+                res.status(200).json(updateUser);
+            }else{
+                res.status(404).send("User not found");
+            }
+        }else{
+            res.status(400).send("Rol not was accepted. Choose through the following options: user or premium");
+        }
+    }catch(error){
+        console.log(error.message)
+    }
+}
 
 //Configurando mailing
 const mailConfig = {
@@ -80,5 +106,6 @@ export default {
     logout,
     github,
     githubCallback,
-    currentUser
+    currentUser,
+    changeUserRole
 };

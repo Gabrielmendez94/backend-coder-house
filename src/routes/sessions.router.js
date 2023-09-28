@@ -24,14 +24,14 @@ router.get('/send-recover-email/:email', async (req, res)=>{
 router.get('/restore-pass/:token', validarToken, (req, res)=>{
     res.render('restore-pass', {token: req.params.token});
 });
-router.post('/pass-change/:token', validarToken, async (req, res)=>{
+router.put('/pass-change/:token', validarToken, async (req, res)=>{
     if(!req.params.token){
         res.redirect('/send-recover-email/:email');
     }
-    const password = req.body;
-    console.log(password);
+    const password = req.body.newPassword;
     const email = req.body.email;
     const hashedPassword = createHash(password);
+    console.log(hashedPassword);
     await userModel.updateOne({email: email}, {$set: {password: hashedPassword}});
     res.send({message: 'Password Changed'});
 });

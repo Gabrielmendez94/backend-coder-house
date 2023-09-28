@@ -1,11 +1,11 @@
 <div>
-    <form id="restorePass"<!-- method="post" action="/api/sessions/pass-change/{{token}}"-->>
+    <form id="restorePass">
         <div class="form-group">
             <label for="new-pass">Nueva pass</label>
-            <input type="password" name="new-pass" placeholder="Ingrese su nueva pass" class="form-control" id="new-pass" required>
+            <input type="password" name="newPassword" placeholder="Ingrese su nueva pass" class="form-control" id="new-pass" required>
             </div>
             <input type="hidden" name="token" value="{{token}}">
-            <button type="submit" class="btn btn-primary">Enviar</button>
+            <input type="submit" value="Enviar">
     </form>
 </div>
 <script src="/js/restore-pass.js"></script>

@@ -19,7 +19,8 @@ import { productsUpdated, chat } from './utils/socketUtils.js';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
 import { addLogger, loggerInfo } from './utils/loggers/logger.js';
-
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUIExpress from 'swagger-ui-express';
 
 const app = express();
 const PORT = config.port, MONGO_PASS = config.dbPswd, MONGO_USER = config.dbUser, MONGO_HOST =config.dbHost;
@@ -38,7 +39,23 @@ const MONGO = `mongodb+srv://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}/ecommerce
 const connection = mongoose.connect(MONGO, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-})
+});
+
+//CONFIGURACIÓN SWAGGER
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info:{
+            title: 'Documentacion API Ecommerce',
+            description: 'Documentacion para uso de Swagger!'
+        }
+    },
+    apis: [`C:/Users/usuario/Desktop/backend-coder-house/src/docs/*.yaml`]
+};
+// CREACION DEL SPECS
+const specs = swaggerJSDoc(swaggerOptions);
+// DECLARACION SWAGGER API - ENDPOINT
+app.use('/apidocs', swaggerUIExpress.serve, swaggerUIExpress.setup(specs));
 
 export const io = new Server(httpServer);
 app.set('io', io);

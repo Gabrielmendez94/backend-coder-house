@@ -1,0 +1,7 @@
+paths:
+  /api/carts/:
+    post:
+      summary: Crea un carrito nuevo en la base de Datos
+      responses:
+        '200':
+          description: El carrito se creó de forma satisfactoria

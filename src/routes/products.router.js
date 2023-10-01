@@ -7,7 +7,7 @@ const router = Router();
 
 router.get('/', autorizacion(['admin', 'user']), getAllProducts);
 router.get('/:pid', autorizacion(['admin', 'user']), getProductByID);
-router.post('/', /*autorizacion('admin'), uploader.array('thumbnail'),*/ createNewProduct);
+router.post('/', createNewProduct);
 router.put('/:pid', autorizacion('admin'), updateProductById);
 router.delete('/:pid', autorizacion('admin'), deleteProductById);
 

@@ -6,4 +6,43 @@ paths:
         '200':
           description: Los productos fueron obtenidos satisfactoriamente de la base de datos
         '500':
-          description: Error interno del servidor
+          description: Ocurrió un error interno en el servidor y no se pudieron obtener los productos
+
+    post:
+      summary: Crea un nuevo producto
+      responses:
+        '200':
+          description: El producto fue creado satisfactoriamente
+        '400':
+          description: Ocurrió un error en la creación del producto
+        '500':
+          description: Ocurrió un error interno en el servidor y no se pudo crear el producto
+
+  /api/products/{id}:
+    get:
+      summary: Obtiene un producto específico de acuerdo a su ID
+      responses:
+        '200':
+          description: El producto fue encontrado de forma satisfactoria
+        '400':
+          description: Ocurrió un error y no se pudo encontrar el producto
+        '500':
+          description: Ocurrió un error interno en el servidor y no se pudo encontrar el producto
+    put:
+      summary: Actualiza un producto por ID
+      responses:
+        '200':
+          description: El producto se actualizó de forma correcta
+        '404':
+          description: Ocurrió un error y no se pudo actualizar el producto
+        '500':
+          description: Ocurrió un error interno en el servidor y no se pudo actualizar el producto
+    delete:
+      summary: Elimina un producto por ID
+      responses:
+        '200':
+          description: El producto se eliminó de forma correcta
+        '404':
+          description: Ocurrió un error y no se pudo eliminar el producto
+        '500':
+          description: Ocurrió un error interno en el servidor y no se pudo eliminar el producto

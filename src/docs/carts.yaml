@@ -5,3 +5,64 @@ paths:
       responses:
         '200':
           description: El carrito se creó de forma satisfactoria
+        '404':
+          description: Ocurrió un error en la creación del carrito
+        '500':
+          description: Ocurrió un error interno en el servidor y no se pudo crear el carrito
+  /api/carts/{id}:
+    get:
+      summary: Obtiene un carrito de compra específico de acuerdo a su ID
+      responses:
+        '200':
+          description: El carrito fue encontrado de forma satisfactoria
+        '400':
+          description: Ocurrió un error y no se pudo encontrar el carrito
+        '500':
+          description: Ocurrió un error interno en el servidor y no se pudo encontrar el carrito
+    put:
+      summary: Actualiza un carrito por ID
+      responses:
+        '200':
+          description: El carrito se actualizó de forma correcta
+        '404':
+          description: Ocurrió un error y no se pudo actualizar el carrito
+        '500':
+          description: Ocurrió un error interno en el servidor y no se pudo actualizar el carrito
+  /api/carts/{cid}/product/{pid}:
+    post:
+      summary: Agrega un producto en base a su ID, a un carrito determinado en base a su ID
+      responses:
+        '200':
+          description: El producto se agregó de forma satisfactoria en el carrito correspondiente
+        '400':
+          description: Ocurrió un error y no se pudo agregar el producto solicitado en el carrito correspondiente
+        '500':
+          description: Ocurrió un error interno en el servidor y no se pudo agregar el producto solicitado en el carrito correspondiente
+    put:
+      summary: Actualiza la cantidad de un producto en base a su ID, en un carrito determinado en base a su ID
+      responses:
+        '200':
+          description: El producto se actualizó de forma satisfactoria en el carrito correspondiente
+        '400':
+          description: Ocurrió un error y no se pudo actualizar el producto solicitado en el carrito correspondiente
+        '500':
+          description: Ocurrió un error interno en el servidor y no se pudo actualizar el producto solicitado en el carrito correspondiente
+    delete:
+      summary: Elimina un producto en base a su ID, en un carrito determinado en base a su ID
+      responses:
+        '200':
+          description: El producto se eliminó de forma satisfactoria en el carrito correspondiente
+        '400':
+          description: Ocurrió un error y no se pudo eliminar el producto solicitado en el carrito correspondiente
+        '500':
+          description: Ocurrió un error interno en el servidor y no se pudo eliminar el producto solicitado en el carrito correspondiente
+  /api/carts/{cid}/checkout:
+    post:
+      summary: Finaliza el proceso de compra del carrito
+      responses:
+        '200':
+          description: La compra se realizó de forma satisfactoria
+        '404':
+          description: Ocurrió un error en la petición y no se logró realizar la compra del carrito solicitado
+        '500':
+          description: Ocurrió un error interno en el servidor y no se logró realizar la compra del carrito solicitado

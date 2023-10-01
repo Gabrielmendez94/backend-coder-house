@@ -9,7 +9,6 @@ newForm.addEventListener('submit', async e =>{
     data.forEach((value, key)=>obj[key]= value);
     const { email, newPassword } = obj;
     const newObj = { email, newPassword };
-    console.log({newObj});
     await fetch(`/api/sessions/pass-change/${obj.token}`, {
         method: 'PUT',
         body: JSON.stringify(newObj),

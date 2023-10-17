@@ -35,7 +35,7 @@ router.put('/pass-change/:token', validarToken, async (req, res)=>{
     res.send({message: 'Password Changed'});
 });
 
-router.post('/premium/:uid', sessionsController.changeUserRole);
+//router.post('/premium/:uid', sessionsController.changeUserRole);
 
 
 export default router;

@@ -35,7 +35,7 @@ const githubCallback = (req, res) => {
 const currentUser = (req, res) => {
     res.send({ status: 1, msg: 'User logged in', user: req.user });
 };
-
+/*
 const changeUserRole = (req, res) =>{
     try{
         const userId = req.params.uid;
@@ -59,7 +59,7 @@ const changeUserRole = (req, res) =>{
     }catch(error){
         console.log(error.message)
     }
-}
+}*/
 
 //Configurando mailing
 const mailConfig = {
@@ -97,6 +97,12 @@ export class UsersController{
     updateUser(){
         console.log('Password changed');
     }
+// TO DO : Mover toda la lógica relacionada al usuario al users.controller.js;
+/*    setLastConnection(id){
+        try{
+            const user = await this.users
+        }
+    }*/
 }
 
 export default {
@@ -106,6 +112,5 @@ export default {
     logout,
     github,
     githubCallback,
-    currentUser,
-    changeUserRole
+    currentUser
 };

@@ -23,6 +23,15 @@ export default class UserManager {
         }
     }
 
+    async getUserById(id){
+        try{
+            const userData = await this.userModel.findOne({_id: id});
+            return userData
+        }catch(error){
+            throw new Error (`Failed to get the user: ${error.message}`);
+        }
+    }
+
     async toggleUserRole(user){
         try{
             const newRole = user.user_role === "premium" ? "user" : "premium";

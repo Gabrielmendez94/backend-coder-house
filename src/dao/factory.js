@@ -2,6 +2,7 @@ import TicketManager from "./mongo/ticketsManager.js";
 import CartManager from "./mongo/cartManager.js";
 import ProductManager from './mongo/productManager.js';
 import MessagesManager from "./mongo/messagesManager.js";
+import UserManager from "./mongo/usersManager.js";
 import config from "../config/config.js";
 
 const PERSISTENCE = config.factory.persistence;
@@ -54,6 +55,19 @@ export class MessagesDaoFactory{
                 throw new Error('File persistence not implemented yet');
             default:
                 return new MessagesManager();
+        }
+    }
+}
+
+export class UsersDaoFactory{
+    static getDao(){
+        switch(PERSISTENCE){
+            case 'MONGO':
+                return new UserManager();
+            case 'FILE':
+                throw new Error('File persistence not implemented yet');
+            default:
+                return new UserManager();
         }
     }
 }

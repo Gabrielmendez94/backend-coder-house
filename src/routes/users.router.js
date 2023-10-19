@@ -1,10 +1,9 @@
 import { Router } from "express";
-import { UsersController } from "../controllers/sessions.controller.js";
+import { updateUserDocuments, updateUserRole } from "../controllers/users.controller.js";
 
 const router = new Router();
-const usersController = new UsersController();
 
-router.post('/premium/:uid', );
-router.post('/:uid/documents', )
+router.post('/premium/:uid', updateUserRole);
+router.post('/:uid/documents', updateUserDocuments);
 
 export default router;

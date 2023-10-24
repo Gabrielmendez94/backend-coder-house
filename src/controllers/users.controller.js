@@ -22,6 +22,15 @@ const transport = nodemailer.createTransport(mailConfig);
 
 const usersManager = new UserManager();
 
+export const getUsers = async (req, res)=>{
+    try{
+        const users = await usersManager.getAllUsers();
+        return users;
+    }catch(error){
+        throw new Error(e);
+    }
+}
+
 export const sendEmail = (req, res)=>{
     try{
         const email = req.params.email;

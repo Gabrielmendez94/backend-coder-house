@@ -25,7 +25,7 @@ const usersManager = new UserManager();
 export const getUsers = async (req, res)=>{
     try{
         const users = await usersManager.getAllUsers();
-        return users;
+        res.json(users);
     }catch(error){
         throw new Error(e);
     }

@@ -10,7 +10,7 @@ import sessionsRouter from './routes/sessions.router.js';
 import viewsRouter from './routes/views.router.js';
 import mailingRouter from './routes/mailing.router.js';
 import twilioRouter from './routes/twilio.router.js';
-import mockingRouter from './routes/mocking.routes.js';
+import mockingRouter from './routes/mocking.router.js';
 import logsRouter from './routes/logs.router.js';
 import usersRouter from './routes/users.router.js';
 import config from './config/config.js';

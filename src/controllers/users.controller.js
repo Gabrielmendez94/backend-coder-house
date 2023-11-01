@@ -2,6 +2,7 @@ import UserManager from "../dao/mongo/usersManager.js";
 import {default as token} from 'jsonwebtoken';
 import config from "../config/config.js";
 import nodemailer from 'nodemailer';
+import userModel from "../dao/models/users.model.js";
 
 const PRIVATE_KEY = config.jwtAuth.privateKey, BASE_URL = config.baseurl, PORT = config.port;
 
@@ -20,7 +21,7 @@ const transport = nodemailer.createTransport(mailConfig);
 
 // TO DO : Crear funciones independientes en lugar de métodos
 
-const usersManager = new UserManager();
+const usersManager = new UserManager(), user_Model = new userModel() ;
 
 export const getUsers = async (req, res)=>{
     try{
@@ -115,27 +116,38 @@ export const updateUserRole = async (req, res) =>{
     }
 }
 
-/*export const changeUserRole = (req, res) =>{
-    try{
-        const userId = req.params.uid;
-        const updateRole = req.body.role;
-
-        if(["user", "premium"].includes(updateRole)){
-            const updateUser = userModel.findByIdAndUpdate(
-                userId,
-                {userRole: updateRole},
-                {new: true}
-            );
-
-            if(updateUser){
-                res.status(200).json(updateUser);
-            }else{
-                res.status(404).send("User not found");
-            }
-        }else{
-            res.status(400).send("Rol not was accepted. Choose through the following options: user or premium");
-        }
-    }catch(error){
-        console.log(error.message)
+export const deleteInactiveUsers = async (req, res) => {
+    try {
+      const twoDaysAgo = new Date();
+      twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+  
+      const deletedUsers = await user_Model.deleteMany({ last_connection: { $lt: twoDaysAgo } });
+  
+      if (deletedUsers.deletedCount > 0) {
+        deletedUsers.forEach(async (user) => {
+          const { email } = user;
+  
+          try {
+  
+            transport.sendMail({
+              from: `Coder ${config.mailing.auth.user}>`,
+              to: email,
+              subject: "Cuenta eliminada",
+              html: `<h1>Tu cuenta ha sido eliminada</h1>
+                     <p>Lamentamos informarte que tu cuenta ha sido eliminada debido a inactividad.</p>`,
+            });
+  
+            console.log(`Correo enviado a ${email}`);
+          } catch (error) {
+            console.error(`Error al enviar correo a ${email}: ${error.message}`);
+          }
+        });
+  
+        return res.status(200).json({ message: `Se eliminaron ${deletedUsers.deletedCount} usuarios inactivos` });
+      } else {
+        return res.status(200).json({ message: 'No se encontraron usuarios inactivos para eliminar' });
+      }
+    } catch (error) {
+      return res.status(500).json({ error: 'Error al eliminar usuarios inactivos' });
     }
-}*/
+  };
